@@ -102,21 +102,21 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var result = [];
+    var result = {};
     if (iterator === undefined) {
       _.each(array, function(val) {
-        if (!result.includes(val)) {
-          result.push(val);
+        if (result[val] === undefined) {
+          result[val] = val;
         }
       });
     } else {
       _.each(array, function(val) {
-        if (!result.includes(val)) {
-          result.push(val);
+        if (result[iterator(val)] === undefined) {
+          result[iterator(val)] = val;
         }
       });
     }
-    return result;
+    return Object.values(result);
   };
 
 
@@ -202,12 +202,27 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    var flag = arguments.length === 1;
+    return _.reduce(collection, function(fails, item) {
+      if (flag) {
+        if (item && fails) {
+          return true;
+        } else {
+          return false;
+        }
+      } else if (iterator(item) && fails) {
+        return true;
+      } else {
+        return false;
+      }
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    return _.reduce;
   };
 
 
