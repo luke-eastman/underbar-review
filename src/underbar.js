@@ -221,8 +221,23 @@
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+
     // TIP: There's a very clever way to re-use every() here.
-    return _.reduce;
+    var flag = false;
+    if (iterator === undefined) {
+      _.every(collection, function(item) {
+        if (item) {
+          flag = true;
+        }
+      });
+    } else {
+      _.every(collection, function(item) {
+        if (iterator(item)) {
+          flag = true;
+        }
+      });
+    }
+    return flag;
   };
 
 
@@ -245,11 +260,25 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (obj[key] === undefined) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -293,6 +322,15 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var result = {};
+    return function() {
+      var args = JSON.stringify(arguments);
+      if (result[args] === undefined) {
+        result[args] = func.apply(this, arguments);
+      }
+      return result[args];
+
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -301,7 +339,12 @@
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
-  _.delay = function(func, wait) {
+  _.delay = function(func, wait, ...manyMoreArgs) {
+    if (arguments.length > 2) {
+      setTimeout(func(...manyMoreArgs), wait);
+    } else {
+      setTimeout(func, wait);
+    }
   };
 
 
@@ -316,6 +359,15 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var result = [];
+    for (var i = array.length - 1; i >= 0; i--) {
+      var j = Math.ceil(Math.random() * i);
+      result[i] = array[j];
+      result[j] = array[i];
+
+    }
+    return result;
+
   };
 
 
