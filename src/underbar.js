@@ -360,7 +360,6 @@
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     var result = array.slice(0);
-    debugger;
     for (var i = 0; i < array.length - 2; i++) {
       var j = Math.floor(Math.random() * (array.length - i) + i);
       var temp = result[i];
