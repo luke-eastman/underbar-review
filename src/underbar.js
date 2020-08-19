@@ -383,6 +383,17 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    if (typeof functionOrKey === 'function') {
+
+      return _.map(collection, function(item) {
+        return functionOrKey.apply(item);
+      });
+    } else {
+      return _.map(collection, function(item) {
+        var result = item[functionOrKey].apply(item);
+        return result;
+      });
+    }
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -390,6 +401,63 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    // var result = JSON.stringify(collection);
+    // result = JSON.parse(result);
+    // if (typeof iterator === 'string') {
+    //   result.sort(function(item1, item2) {
+    //     if (item1[iterator] > item2[iterator]) {
+    //       return item1;
+    //     } else {
+    //       return item2;
+    //     }
+    //     debugger;
+    //   });
+    // } else {
+    //   result.sort(iterator);
+    // }
+    // return result;
+    var result = [];
+    var iteratedResults = [];
+
+    if (typeof iterator === 'string') {
+      _.each(collection, function(thing) {
+        iteratedResults.push(thing[iterator]);
+      });
+      iteratedResults.sort();
+      console.log(iteratedResults);
+      for (var i = 0; i < iteratedResults.length; i ++) {
+        var current = iteratedResults[i];
+        for (var j = 0; j < collection.length; j++) {
+          var currentObj = collection[j];
+
+          if (current === currentObj[iterator] && !result.includes(collection[j])) {
+
+            result.push(collection[j]);
+            break;
+          }
+        }
+      }
+    } else {
+
+      _.each(collection, function(thing) {
+        iteratedResults.push(iterator(thing));
+      });
+      iteratedResults.sort();
+
+      for (var i = 0; i < iteratedResults.length; i ++) {
+        var current = iteratedResults[i];
+        for (var j = 0; j < collection.length; j++) {
+          var currentObj = collection[j];
+
+          if (current === iterator(currentObj)) {
+
+            result.push(collection[j]);
+            break;
+          }
+        }
+      }
+    }
+    return result;
   };
 
   // Zip together two or more arrays with elements of the same index
